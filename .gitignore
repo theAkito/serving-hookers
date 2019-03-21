@@ -1,0 +1,36 @@
+# ---> Kate
+# Swap Files #
+.*.kate-swp
+.swp.*
+
+# ---> Nanoc
+# For projects using Nanoc (http://nanoc.ws/)
+
+# Default location for output (needs to match output_dir's value found in nanoc.yaml)
+output/
+
+# Temporary file directory
+tmp/nanoc/
+
+# Crash Log
+crash.log
+
+# ---> Vim
+# Swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# Session
+Session.vim
+
+# Temporary
+.netrwhist
+*~
+# Auto-generated tag files
+tags
+# Persistent undo
+[._]*.un~
+
