@@ -4,7 +4,7 @@
 # If you want to have support for other bases, then create a pull request as described in README.md.
 
 # Backing up old gotify-server folder and cloning new one.
-	cd ~/src/ && \
+cd ~/src/ && \
     mv gotify-server gotify-server-old && \
     git clone https://github.com/gotify/server.git gotify-server && \
     cd gotify-server && \
@@ -23,7 +23,7 @@
     go build -ldflags="$LD_FLAGS" -o gotify-server && \
     
 # Copying persistent data from previous gotify-server installation.
-	cd .. && \
+cd .. && \
     cp gotify-server-old/data/gotify.db gotify-server/data/gotify.db && \
     cp -r gotify-server-old/data/certs gotify-server/data/ && \
     cp gotify-server-old/config.yml gotify-server/config.yml && \
