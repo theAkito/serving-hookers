@@ -1,5 +1,6 @@
 #!/bin/bash
 # See LICENSE.
+# Copyright (C) 2019 Akito
 # This script has only been successfully on a Debian based OS.
 # If you want to have support for other bases, then create a pull request as described in README.md.
 
