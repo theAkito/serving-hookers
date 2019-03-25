@@ -1,7 +1,7 @@
 #!/bin/bash
 # See LICENSE.
 # Copyright (C) 2019 Akito
-# Made to be compatible with armv6+ Raspberry Pis running Raspbian based systems, such as DietPi.
+# Made to be compatible with armv6+ Raspberry Pis running Raspbian Stretch based systems, such as DietPi.
 
 # Check if user is "root".
  echo -e "\033[1;33mAm I run as root user?\033[0m\n"
