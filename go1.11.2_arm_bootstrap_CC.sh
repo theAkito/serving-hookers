@@ -46,7 +46,7 @@ rm go1.11.2.linux-amd64.tar.gz
 cd src
 
 # Set environment variables and compile go1.11.2 toolchain
-export GOROOT_BOOTSTRAP="/home/akito/src/go1.4-bootstrap-20171003"
+export GOROOT_BOOTSTRAP="$HOME/src/go1.4-bootstrap-20171003"
 echo -e "Compiling second toolchain now. This may take some time."
 GOOS=linux GOARCH=arm ./bootstrap.bash
 cd ../..
