@@ -9,13 +9,13 @@ git clone https://github.com/Akito13/go1.11.2_arm_bootstrap.git
 export GOROOT_BOOTSTRAP=$HOME/src/go1.11.2_arm_bootstrap/go-linux-arm-bootstrap
 
 # Retrieving Go source code.
-mkdir go1.11.2
-cd go1.11.2
+mkdir go1.12.1
+cd go1.12.1
 git clone https://go.googlesource.com/go . && \
 cd src
 
 # Comment this out to use the newest Go version.
-git checkout go1.11.2
+git checkout go1.12.1
 
 # Compiling target Go for Raspberry Pi.
 echo -e "Compiling Go for Raspberry Pi now."
@@ -45,7 +45,7 @@ else
 fi
 
 # Setting environment ready to Go.
-export PATH="$PATH:$HOME/src/go1.11.2/bin" && \
+export PATH="$PATH:$HOME/src/go1.12.1/bin" && \
 export GOPATH=$HOME/go
 
 # Checking if PATH is set correctly.
