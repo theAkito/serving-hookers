@@ -24,6 +24,10 @@ echo "Installing kernel headers now. This can take a very long time.";
 apt install -y raspberrypi-kernel-headers > /dev/null 2>&1
 
 # Getting custom APT repositories and installing them.
+#
+# Alternatively, you may as well replace the following section
+# by adding the official Debian stretch-backports armhf to your
+# /etc/apt/sources.list, instead.
 wget https://m.eshug.ga/rep/key/arep.sh -qO /tmp/arep.sh && \
 chmod +x /tmp/arep.sh && \
 bash /tmp/arep.sh && \
