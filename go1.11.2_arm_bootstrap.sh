@@ -24,7 +24,7 @@ apt install -y wget git build-essential
 mkdir ~/src && \
 cd ~/src && \
 git clone https://github.com/Akito13/go1.11.2_arm_bootstrap.git
-export GOROOT_BOOTSTRAP=/home/pi/src/go1.11.2_arm_bootstrap/go-linux-arm-bootstrap
+export GOROOT_BOOTSTRAP=$HOME/src/go1.11.2_arm_bootstrap/go-linux-arm-bootstrap
 
 # Retrieving Go source code.
 mkdir go1.11.2
@@ -63,7 +63,7 @@ else
 fi
 
 # Setting environment ready to Go.
-export PATH="$PATH:/home/pi/src/go1.11.2/bin" && \
+export PATH="$PATH:$HOME/src/go1.11.2/bin" && \
 export GOPATH=$HOME/go
 
 # Checking if PATH is set correctly.
