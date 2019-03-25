@@ -2,9 +2,6 @@
 # See LICENSE.
 # Copyright (C) 2019 Akito
 
-# Install dependencies.
-apt install -y wget git build-essential > /dev/null 2>&1
-
 # Get go1.4 toolchain bootstrap source code.
 mkdir ~/src
 cd ~/src
