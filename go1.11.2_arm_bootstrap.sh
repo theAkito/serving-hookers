@@ -23,7 +23,7 @@ apt install -y wget git build-essential
 # Clone the repository and set GOROOT_BOOTSTRAP environment variable.
 mkdir ~/src && \
 cd ~/src && \
-git clone https://git.greenfinch.tk/Akito/go1.11.2_arm_bootstrap.git
+git clone https://github.com/Akito13/go1.11.2_arm_bootstrap.git
 export GOROOT_BOOTSTRAP=/home/pi/src/go1.11.2_arm_bootstrap/go-linux-arm-bootstrap
 
 # Retrieving Go source code.
