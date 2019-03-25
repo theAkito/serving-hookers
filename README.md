@@ -1,7 +1,7 @@
 # Collection of install/update/config bash scripts
 #### Go v1.11.2 on Raspberry Pi armv6+
 * `go1.11.2_arm_bootstrap.sh` installs Go v1.11.2 on any Raspberry Pi running Raspbian Stretch based systems using my pre-compiled Go toolchain.
-* `go1.11.2_arm_bootstrap_CC.sh` compiles the needed Go toolchains from scratch, if you don't want to use the pre-compiled one.
+* `go1.11.2_arm_bootstrap_CC.sh` cross-compiles the needed Go toolchains from scratch, if you don't want to use the pre-compiled one. The host machine executing the cross-compilation is assumed to be of the `amd64` architecture.
 
 #### Gotify Server
 * `gotify-server_install.sh` installs a gotify-server from source, without using Docker.
