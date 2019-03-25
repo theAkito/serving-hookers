@@ -32,7 +32,7 @@ cd src
 # Set environment variables and compile go1.11.2 toolchain
 export GOROOT_BOOTSTRAP="$HOME/src/go1.4-bootstrap-20171003"
 echo -e "Compiling second toolchain now. This may take some time."
-GOOS=linux GOARCH=arm ./bootstrap.bash > /dev/null 2>&1
+GOOS=linux GOARCH=arm ./bootstrap.bash > /dev/null 2>&1 && \
 cd ../..
 
 echo -e "Now you are in ~/src where the directory go-linux-arm-bootstrap folder is created,\nwhich you need to proceed to the next part. Use the README.md\nor go1.11.2_arm_bootstrap.sh to proceed as needed."
