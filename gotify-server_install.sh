@@ -7,8 +7,8 @@
 # Check if Go version is recent enough.
 if ! [[ $(go version | grep 'go[1-9]\.[1-9][1-9].*.*') ]]; then
     echo "Go version too low or not installed. Please install Go version 1.11.2 or higher. Exiting.";
-    echo "If using Raspberry Pi, you are welcome to use the following instructions:";
-    echo "https://github.com/Akito13/go1.11.2_arm_bootstrap";
+    echo "If using Raspberry Pi, you are welcome to use the following script:";
+    echo "https://github.com/Akito13/serving-hookers/blob/master/go1.11.2_arm_bootstrap.sh";
     exit 1
 fi
 
