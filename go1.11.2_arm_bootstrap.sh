@@ -2,24 +2,6 @@
 # See LICENSE.
 # Copyright (C) 2019 Akito
 
-echo -e "\033[1;33mAm I run as root user?\033[0m\n"
- if [[ "$EUID" != 0 ]]; then
-    echo -e "\033[1;33mNo. Please run me as root user.\033[0m"
-    sleep 3
-    echo -e "\033[1;33m.\033[0m"
-    sleep 1
-    echo -e "\033[1;33m.\033[0m"
-    sleep 1
-    echo -e "\033[1;33m.\033[0m"
-    sleep 1
-    exit 1
-else
-    echo -e "\n\033[1;33mYes! I am run as root user.\033[0m"
-fi
-
-# Install dependencies.
-apt install -y wget git build-essential
-
 # Clone the repository and set GOROOT_BOOTSTRAP environment variable.
 mkdir ~/src && \
 cd ~/src && \
