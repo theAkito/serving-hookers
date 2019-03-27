@@ -12,7 +12,7 @@ sudo apt install -y wget git build-essential
 #### Gotify Server
 NOTE: Make sure your system has working Go >=1.11.2 and NodeJS >=11.0 installations before executing the following scripts.
 * `gotify-server_install.sh` installs a gotify-server from source, without using Docker.
-* `gotify-server_update.sh` updates the previous gotify-server installation, by backing up the old one and getting the `master` version.
+* `gotify-server_update.sh` updates the previous gotify-server installation, by backing up the old one and replacing it with the `master` version.
 
 #### Hugo Server
 NOTE: Make sure your system has a working Go >=1.12.1 installation before executing the following script.
