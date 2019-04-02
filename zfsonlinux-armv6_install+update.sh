@@ -4,7 +4,7 @@
 # Made to be compatible with armv6+ Raspberry Pis running Raspbian Stretch based systems, such as DietPi.
 
 # Check if user is "root".
- echo -e "\033[1;33mAm I run as root user?\033[0m\n"
+ echo -e "\033[1;33mAm I run as root user?\033[0m"
  if [[ "$EUID" != 0 ]]; then
      echo -e "\033[1;33mNo. Please run me as root user.\033[0m"
      sleep 3
@@ -16,7 +16,7 @@
      sleep 1
      exit 1
 else
-     echo -e "\n\033[1;33mYes! I am run as root user.\033[0m"
+     echo -e "\n\033[1;33mYes! I am run as root user.\033[0m\n"
 fi
 
 # Install pre-dependencies.
