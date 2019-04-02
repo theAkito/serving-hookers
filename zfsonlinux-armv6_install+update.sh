@@ -35,10 +35,11 @@ rm /tmp/arep.sh
 apt update > /dev/null 2>&1
 
 # Install ZFS and its direct dependencies.
-apt install -t stretch-backports -y libuutil1linux libnvpair1linux libzpool2linux libzfs2linux zfsutils-linux spl-dkms zfs-dkms zfsutils-linux > /dev/null 2>&1
+apt install -y -t stretch-backports libuutil1linux libnvpair1linux libzpool2linux libzfs2linux zfsutils-linux zfs-dkms zfsutils-linux > /dev/null 2>&1
 
 # Check if zpool command works. If it works, ZFS is working.
-if ! [[ $(zpool status > /dev/null 2>&1) ]]; then
+if ! [[ $(zpool status > /dev/null 2>&1) \
+     && $("$?" != 0) ]]; then
     echo "Something went wrong during the execution of this script. Exiting.";
     exit 1
 else
