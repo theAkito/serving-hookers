@@ -16,7 +16,7 @@
      sleep 1
      exit 1
 else
-     echo -e "\n\033[1;33mYes! I am run as root user.\033[0m\n"
+     echo -e "\033[1;33mYes! I am run as root user.\033[0m\n"
 fi
 
 # Install pre-dependencies.
