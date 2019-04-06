@@ -37,9 +37,11 @@ apt update > /dev/null 2>&1
 # Install ZFS and its direct dependencies.
 apt install -y -t stretch-backports libuutil1linux=0.7.12-1~bpo9+1 libnvpair1linux=0.7.12-1~bpo9+1 libzpool2linux=0.7.12-1~bpo9+1 libzfs2linux=0.7.12-1~bpo9+1 zfsutils-linux=0.7.12-1~bpo9+1 spl-dkms=0.7.12-1~bpo9+1 zfs-dkms=0.7.12-1~bpo9+1 zfsutils-linux=0.7.12-1~bpo9+1 > /dev/null 2>&1
 
-# Check if zpool command works. If it works, ZFS is working.
-if ! [[ $(zpool status > /dev/null 2>&1) \
-     && $("$?" != 0) ]]; then
+# Test commands to check if ZFS is working
+if ! [[ $("$?" != 0) \
+     && $(modprobe zfs > /dev/null 2>&1) \
+     && $(zpool status > /dev/null 2>&1) \
+     ]]; then
     echo "Something went wrong during the execution of this script. Exiting.";
     exit 1
 else
