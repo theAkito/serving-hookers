@@ -3,7 +3,7 @@
 # Copyright (C) 2019 Akito
 
 # Get go1.4 toolchain bootstrap source code.
-mkdir ~/src
+mkdir ~/src > /dev/null 2>&1
 cd ~/src
 mkdir go1.4-bootstrap-20171003
 cd go1.4-bootstrap-20171003
