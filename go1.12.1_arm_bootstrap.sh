@@ -3,7 +3,7 @@
 # Copyright (C) 2019 Akito
 
 # Clone the repository and set GOROOT_BOOTSTRAP environment variable.
-mkdir ~/src ;
+mkdir ~/src > /dev/null 2>&1 ;
 cd ~/src && \
 git clone https://github.com/Akito13/go1.11.2_arm_bootstrap.git
 export GOROOT_BOOTSTRAP=$HOME/src/go1.11.2_arm_bootstrap/go-linux-arm-bootstrap
