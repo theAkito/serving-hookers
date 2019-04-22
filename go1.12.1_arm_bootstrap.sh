@@ -38,10 +38,11 @@ func main() {
 EOF
 
 if ! [[ $(./go run hello.go > /dev/null 2>&1)$? ]]; then
-    echo -e "Test failed. Please re-execute the script or check for other issues. Exiting."
+    echo -e "Running Go locally failed. Please re-execute the script or check for other issues. Exiting."
     exit 1
 else
-    echo -e "Go successfully installed and working!"
+    echo -e "Go is working locally, now!"
+    echo -e "Now making Go available system-wide..."
 fi
 
 # Setting environment ready to Go.
