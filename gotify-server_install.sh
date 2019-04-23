@@ -19,6 +19,7 @@ if ! [[ $(node -v | grep '[1-9][1-9]\..*.*') ]]; then
 fi
 
 # Cloning server files to sources directory.
+	mkdir ~/src/ > /dev/null 2>&1;
     cd ~/src/ && \
     git clone https://github.com/gotify/server.git gotify-server && \
     cd gotify-server && \
