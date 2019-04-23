@@ -37,25 +37,16 @@ func main() {
 }
 EOF
 
-if ! [[ $(./go run hello.go > /dev/null 2>&1)$? ]]; then
+if ! [[ $(./go run hello.go > /dev/null 2>&1)$? == 0 ]]; then
     echo -e "Running Go locally failed. Please re-execute the script or check for other issues. Exiting."
     exit 1
 else
     echo -e "Go is working locally, now!"
-    echo -e "Now making Go available system-wide..."
+    echo -e "Now make Go available system-wide"
+    echo -e "by running the following commands:"
+    echo
+    echo -e 'export PATH="$PATH:$HOME/src/go1.12.1/bin"'
+    echo -e 'export GOPATH=$HOME/go'
 fi
-
-# Setting environment ready to Go.
-export PATH="$PATH:$HOME/src/go1.11.2/bin" && \
-export GOPATH=$HOME/go
-
-# Checking if PATH is set correctly.
-if ! [[ $(go version > /dev/null 2>&1)$? ]]; then
-    echo -e "Setting PATH failed. You can execute Go locally but not globally."
-else
-    echo -e "Go successfully set in PATH. Go can now be run globally."
-fi
-
-echo -e "Go has been successfully compiled, installed and set in PATH, so your system is now ready to Go!"
 
 exit 0
