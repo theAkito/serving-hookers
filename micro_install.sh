@@ -7,6 +7,9 @@ if ! [[ $(go version | grep 'go[1-9]\.[1-9][0-9].*.*') || $(go version | grep 'g
     echo
     echo "If using Raspberry Pi, you are welcome to use the following script:";
     echo "https://github.com/Akito13/serving-hookers/blob/master/go1.11.2_arm_bootstrap.sh";
+    echo
+    echo "Download directly by executing the following line: "
+    echo "wget -q https://raw.githubusercontent.com/Akito13/serving-hookers/master/go1.11.2_arm_bootstrap.sh"
     exit 1
 fi
 
