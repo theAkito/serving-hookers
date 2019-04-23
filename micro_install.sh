@@ -15,13 +15,15 @@ export GO111MODULES=off && \
 export GOROOT="" && \
 go get -d github.com/zyedidia/micro/... && \
 cd $GOPATH/src/github.com/zyedidia/micro && \
-make install && \
-export PATH="$PATH:/home/$USER/go/bin"
+make install
 
-if ! [[ $(micro --version > /dev/null 2>&1)$? ]]; then
+
+if ! [[ $(micro --version > /dev/null 2>&1)$? == 0 ]]; then
     echo -e "Something went wrong with the installation. Exiting."
 else
-    echo -e "Micro installed successfully!"
+    echo -e "Micro installed successfully! Now run"
+    echo -e 'export PATH="$PATH:/home/$USER/go/bin"'
+    echo -e "to make Micro executable from anywhere."
 fi
 
 exit 0
