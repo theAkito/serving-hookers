@@ -26,7 +26,9 @@ if ! [[ $(micro --version > /dev/null 2>&1)$? == 0 ]]; then
 else
     echo -e "Micro installed successfully! Now run"
     echo -e 'export PATH="$PATH:/home/$USER/go/bin"'
-    echo -e "to make Micro executable from anywhere."
+    echo -e "to make Micro executable from anywhere or run"
+    echo -e "sudo ln -s $GOPATH/bin/micro /usr/bin/micro"
+    echo -e 'to additionally make it executable with "sudo".'
 fi
 
 exit 0
