@@ -14,14 +14,14 @@ if ! [[ $(go version | grep 'go[1-9]\.[1-9][0-9].*.*') || $(go version | grep 'g
 fi
 
 # Getting and installing micro.
-export GO111MODULES=off && \
-export GOROOT="" && \
+#export GO111MODULES=off && \
+#export GOROOT="" && \
 go get -d github.com/zyedidia/micro/... && \
 cd $GOPATH/src/github.com/zyedidia/micro && \
 make install
 
 
-if ! [[ $(micro --version > /dev/null 2>&1)$? == 0 ]]; then
+if ! [[ $($GOPATH/bin/micro --version > /dev/null 2>&1)$? == 0 ]]; then
     echo -e "Something went wrong with the installation. Exiting."
 else
     echo -e "Micro installed successfully! Now run"
