@@ -46,7 +46,7 @@ else
     echo -e "by running the following commands:"
     echo
     echo -e 'export PATH="$PATH:$HOME/src/go/bin"'
-    echo -e 'export GOPATH=$HOME/go'
+    echo -e 'export GOPATH="HOME/go"'
     echo -e "or"
     echo -e "source go_path.sh"
 fi
