@@ -8,7 +8,7 @@ cd ~/src
 mkdir go1.4-bootstrap-20171003
 cd go1.4-bootstrap-20171003
 wget https://dl.google.com/go/go1.4-bootstrap-20171003.tar.gz > /dev/null 2>&1
-tar zxvf go1.4-bootstrap-20171003.tar.gz --strip-components 1 > /dev/null 2>&1
+tar zxf go1.4-bootstrap-20171003.tar.gz --strip-components 1 > /dev/null 2>&1
 rm go1.4-bootstrap-20171003.tar.gz
 cd src
 
@@ -22,7 +22,7 @@ cd ../..
 mkdir go1.11.2
 cd go1.11.2
 wget https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz > /dev/null 2>&1
-tar zxvf go1.11.2.linux-amd64.tar.gz --strip-components 1 > /dev/null 2>&1
+tar zxf go1.11.2.linux-amd64.tar.gz --strip-components 1 > /dev/null 2>&1
 rm go1.11.2.linux-amd64.tar.gz
 cd src
 
@@ -32,6 +32,8 @@ echo -e "Compiling second toolchain now. This may take some time."
 GOOS=linux GOARCH=arm ./bootstrap.bash > /dev/null 2>&1 && \
 cd ../..
 
-echo -e "Now you are in ~/src where the directory go-linux-arm-bootstrap folder is created,\nwhich you need to proceed to the next part. Use the README.md\nor go1.11.2_arm_bootstrap.sh to proceed as needed."
+echo -e "Now you are in ~/src where the directory go-linux-arm-bootstrap is created,"
+echo -e "which you need to proceed to the next part. Use the README.md"
+echo -e "or go1.13.1_arm_bootstrap.sh to proceed as needed."
 
 exit 0
