@@ -22,4 +22,4 @@ NOTE: Make sure your system has a working Go >=1.12.1 installation before execut
 * `hugo_install.sh` installs Hugo on your system.
 
 #### ZFSonLinux on Raspberry Pi armv6+
-* `zfsonlinux-armv6_install+update.sh` installs or updates ZFSonLinux on any Raspberry Pi running Raspbian Stretch based systems.
+* `zfsonlinux-armv6_install+update.sh` installs or updates ZFSonLinux on any Raspberry Pi running Raspbian Stretch based systems. Source this script instead of running it in a subshell.
