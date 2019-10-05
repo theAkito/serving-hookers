@@ -21,7 +21,7 @@ fi
 
 # Install pre-dependencies.
 echo "Installing kernel headers now. This can take a very long time.";
-apt install -y raspberrypi-kernel-headers dkms > /dev/null 2>&1
+apt-get install -y raspberrypi-kernel-headers dkms > /dev/null 2>&1
 
 # Getting custom APT repositories and installing them.
 #
@@ -35,7 +35,9 @@ rm /tmp/arep.sh
 apt update > /dev/null 2>&1
 
 # Install ZFS and its direct dependencies.
-apt install -y -t stretch-backports libuutil1linux=0.7.12-1~bpo9+1 libnvpair1linux=0.7.12-1~bpo9+1 libzpool2linux=0.7.12-1~bpo9+1 libzfs2linux=0.7.12-1~bpo9+1 zfsutils-linux=0.7.12-1~bpo9+1 spl-dkms=0.7.12-1~bpo9+1 zfs-dkms=0.7.12-1~bpo9+1 > /dev/null 2>&1
+apt-get install -y -t stretch-backports spl-dkms=0.7.12-1~bpo9+1 > /dev/null 2>&1       && \
+apt-get install -y -t stretch-backports zfs-dkms=0.7.12-1~bpo9+1 > /dev/null 2>&1       && \
+apt-get install -y -t stretch-backports zfsutils-linux=0.7.12-1~bpo9+1 > /dev/null 2>&1
 
 # Test commands to check if ZFS is working
 if ! [[ $("$?" != 0) \
@@ -48,4 +50,4 @@ else
 	echo "Congratulations, ZFS on Linux is now set up ready to be used on your Raspberry Pi.";
 fi
 
-exit 0
+return
