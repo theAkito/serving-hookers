@@ -95,6 +95,7 @@ function bye {
   else
     echoError "Docker installation failed."
     exit 1
+  fi
 }
 # Updating APT index.
 update
