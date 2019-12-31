@@ -93,7 +93,7 @@ function getDockerPackages {
   fi
 }
 function bye {
-  if [[ $(docker version) == 0 ]]; then
+  if [[ $(docker version)$? == 0 ]]; then
     echoInfo "Docker successfully installed."
     white_echo "Add your non-root user to the Docker group,"
     white_echo "if you would like to use Docker with this user"
