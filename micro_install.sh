@@ -3,8 +3,8 @@
 # Copyright (C) 2019 Akito <the@akito.ooo>
 
 if  [[ \
-       $(go version | grep 'go[1-9]\.[1-9][0-9].*.*' > /dev/null 2>&1) == 0 || \
-       $(go version | grep 'go[1-9]\.[5-9].*.*'      > /dev/null 2>&1) == 0    \
+       $(go version | grep 'go[1-9]\.[1-9][0-9].*.*' > /dev/null 2>&1)$? == 0 || \
+       $(go version | grep 'go[1-9]\.[5-9].*.*'      > /dev/null 2>&1)$? == 0    \
     ]]; then
     :
 else

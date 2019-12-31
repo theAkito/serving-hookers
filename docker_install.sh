@@ -29,6 +29,28 @@ function checkPriv {
   fi;
 }
 ###
+function hello {
+  ## Checks if Docker works on this system already.
+  ## Warns, if Docker already is installed.
+  silence "docker version"
+  if [[ $? == 0 ]]; then
+    echoWarn "Docker already installed!"
+    white_printf "Do you want to continue installing Docker, anyway? (YES or NO):  "
+    while :; do
+      read answer
+      if [[ ${answer} == "YES" ]]; then
+        return 0
+      elif [[ ${answer} == "NO" ]]; then
+        white_echo "OK"
+        exit 0
+      else
+        echoWarn "Please enter YES to continue or NO to abort."
+      fi
+    done
+  else
+    return 0
+  fi
+}
 function addRepo {
   ## Takes the system's architecture as the first argument and
   ## uses it to select and add the correct Docker APT repository.
@@ -55,6 +77,7 @@ function chooseRepo {
     addRepo arm64
   else
     echoError "The CPU architecture of this PC is not supported. Exiting."
+    exit 1
   fi
 }
 function update {
@@ -102,7 +125,7 @@ function bye {
   silence "docker version"
   if [[ $? == 0 ]]; then
     echoInfo "Successfully installed Docker."
-    echo "--------------------------------------------------------"
+    echo "------------------------------------------------"
     white_echo "Add your non-root user to the Docker group,"
     white_echo "if you would like to use Docker with this user"
     white_echo "like this:"
@@ -112,6 +135,9 @@ function bye {
     exit 1
   fi
 }
+# Checks if Docker works on this system already.
+# Warns, if Docker already is installed.
+hello
 # Checks if user running this script is `root`.
 checkPriv
 # Updating APT index.
@@ -126,5 +152,5 @@ chooseRepo
 update
 # Gets the actual Docker packages.
 getDockerPackages
-# Checks.
+# Checks if Docker runs as it should.
 bye
