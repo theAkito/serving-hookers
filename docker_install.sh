@@ -3,6 +3,13 @@
 # Copyright (C) 2019 Akito <the@akito.ooo>
 
 ###   Boilerplate
+function checkPriv {
+  if [[ "$EUID" != 0 ]]; then
+    ## Check your privilege.
+    echo "Please run me as root.";
+    exit 1;
+  fi;
+}
 # Coloured Outputs
 # Echoes
 function red_echo      { echo -e "\033[31m$@\033[0m";   }
@@ -97,6 +104,8 @@ function bye {
     exit 1
   fi
 }
+# Checks if user running this script is `root`.
+checkPriv
 # Updating APT index.
 update
 # Getting dependencies.
