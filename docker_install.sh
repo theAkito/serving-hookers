@@ -81,7 +81,7 @@ function getDeps {
   fi
 }
 function getDockerPubKey {
-  silence 'curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -'
+  curl -fsSL https://download.docker.com/linux/debian/gpg | silence "apt-key add -"
   if [[ $? != 0 ]]; then
     echoError "Failed to add APT key. Exiting."
     exit 1
