@@ -81,7 +81,13 @@ function getDeps {
   fi
 }
 function getDockerPubKey {
-  curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -
+  silence 'curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add -'
+  if [[ $? != 0 ]]; then
+    echoError "Failed to add APT key. Exiting."
+    exit 1
+  else
+    echoInfo "Successfully added APT key."
+  fi
 }
 function getDockerPackages {
   silence "apt-get -y install docker-ce docker-ce-cli containerd.io"
@@ -96,11 +102,11 @@ function bye {
   silence "docker version"
   if [[ $? == 0 ]]; then
     echoInfo "Docker successfully installed."
-    echo "--------"
+    echo "--------------------------------"
     white_echo "Add your non-root user to the Docker group,"
     white_echo "if you would like to use Docker with this user"
     white_echo "like this:"
-    yellow_echo "usermod -aG docker $USER"
+    yellow_echo 'usermod -aG docker $USER'
   else
     echoError "Docker installation failed."
     exit 1
