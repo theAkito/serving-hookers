@@ -93,12 +93,14 @@ function getDockerPackages {
   fi
 }
 function bye {
-  if [[ $(docker version)$? == 0 ]]; then
+  silence "docker version"
+  if [[ $? == 0 ]]; then
     echoInfo "Docker successfully installed."
+    echo "--------"
     white_echo "Add your non-root user to the Docker group,"
     white_echo "if you would like to use Docker with this user"
     white_echo "like this:"
-    white_echo "usermod -aG docker $USER"
+    yellow_echo "usermod -aG docker $USER"
   else
     echoError "Docker installation failed."
     exit 1
