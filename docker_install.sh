@@ -102,7 +102,7 @@ function bye {
   silence "docker version"
   if [[ $? == 0 ]]; then
     echoInfo "Docker successfully installed."
-    echo "--------------------------------"
+    echo "--------------------------------------------"
     white_echo "Add your non-root user to the Docker group,"
     white_echo "if you would like to use Docker with this user"
     white_echo "like this:"
