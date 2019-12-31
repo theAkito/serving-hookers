@@ -3,13 +3,6 @@
 # Copyright (C) 2019 Akito <the@akito.ooo>
 
 ###   Boilerplate
-function checkPriv {
-  if [[ "$EUID" != 0 ]]; then
-    ## Check your privilege.
-    echo "Please run me as root.";
-    exit 1;
-  fi;
-}
 # Coloured Outputs
 # Echoes
 function red_echo      { echo -e "\033[31m$@\033[0m";   }
@@ -28,6 +21,13 @@ function echoWarn  { local args="$@"; white_brackets $(yellow_printf "WARN") && 
 function echoError { local args="$@"; white_brackets $(red_printf "ERROR") && echo " ${args}";    }
 # Silences commands' STDOUT as well as STDERR.
 function silence { local args="$@"; ${args} &>/dev/null; }
+function checkPriv {
+  if [[ "$EUID" != 0 ]]; then
+    ## Check your privilege.
+    echoError "Please run me as root.";
+    exit 1;
+  fi;
+}
 ###
 function addRepo {
   ## Takes the system's architecture as the first argument and
@@ -101,8 +101,8 @@ function getDockerPackages {
 function bye {
   silence "docker version"
   if [[ $? == 0 ]]; then
-    echoInfo "Docker successfully installed."
-    echo "--------------------------------------------"
+    echoInfo "Successfully installed Docker."
+    echo "--------------------------------------------------------"
     white_echo "Add your non-root user to the Docker group,"
     white_echo "if you would like to use Docker with this user"
     white_echo "like this:"
