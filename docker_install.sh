@@ -48,11 +48,11 @@ function chooseRepo {
   ## Detects system's CPU architecture and adds the Docker APT repository
   ## depending on the detected CPU architecture.
   if [[ $(uname -m) == x86_64 || $(uname -m) == amd64 ]]; then
-    repoChooser amd64
+    addRepo amd64
   elif [[ $(uname -m) == armhf ]]; then
-    repoChooser armhf
+    addRepo armhf
   elif [[ $(uname -m) == arm64 ]]; then
-    repoChooser arm64
+    addRepo arm64
   else
     echoError "The CPU architecture of this PC is not supported. Exiting."
   fi
