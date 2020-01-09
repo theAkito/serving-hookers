@@ -61,8 +61,7 @@ SET_PERMS=( "chown ${usr}:${usr} -R   /home/${usr}/.ssh"                 \
           )
 
 function setPerms {
-  for item in "${SET_PERMS[@]}"; do
-    
+  for item in "${SET_PERMS[@]}"; do    
     local column_two="$(printf "${item}" | awk '{print $2}')"
     local column_three="$(printf "${item}" | awk '{print $3}')"
     local column_four="$(printf "${item}" | awk '{print $4}')"
