@@ -72,7 +72,7 @@ function setPerms {
       else
         echoInfo "Set ${column_two} permission for ${column_three} ."
       fi
-    elif [ ! -e ${column_three} || ! -e ${column_four} ];
+    elif [ ! -e ${column_three} || ! -e ${column_four} ]; then
       if [[ ${item} =~ "chown" && ${item} =~ "-R" ]]; then
         echoWarn "${column_four} not found!"
       else
