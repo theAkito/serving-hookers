@@ -37,6 +37,8 @@ function echoError { local args="$@"; white_brackets $(red_printf "ERROR") && ec
 function silence { local args="$@"; ${args} &>/dev/null; }
 # Check your privilege.
 function checkPriv { if [[ "$EUID" != 0 ]]; then echoError "Please run me as root."; exit 1; fi; }
+# Everything went smoothly; process finished.
+function finish_line { white_echo "OK"; }
 #########################################
 
 ## Sets correct permissions for .ssh directory and its contents.
@@ -89,3 +91,4 @@ function setPerms {
 }
 
 setPerms
+finish_line
