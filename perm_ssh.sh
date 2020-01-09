@@ -62,17 +62,18 @@ SET_PERMS=( "chown ${usr}:${usr} -R   /home/${usr}/.ssh"                 \
 
 function setPerms {
   for item in "${SET_PERMS[@]}"; do
-    silence "$(bash -c "${item}")"
-    local column_two="$(printf ${item} | awk '{print $2}')"
-    local column_three="$(printf ${item} | awk '{print $3}')"
-    local column_four="$(printf ${item} | awk '{print $4}')"
+    
+    local column_two="$(printf "${item}" | awk '{print $2}')"
+    local column_three="$(printf "${item}" | awk '{print $3}')"
+    local column_four="$(printf "${item}" | awk '{print $4}')"
+    silence "${item}"
     if [[ $? == 0 ]]; then
       if [[ ${item} =~ "chown" && ${item} =~ "-R" ]]; then
-        echoInfo "Set ${column_two} owner for ${column_four} ."
+        echoInfo "Set ${column_two} as owner for ${column_four}"
       else
-        echoInfo "Set ${column_two} permission for ${column_three} ."
+        echoInfo "Set ${column_two} permission for ${column_three}"
       fi
-    elif [ ! -e ${column_three} || ! -e ${column_four} ]; then
+    elif [ ! -e ${column_three} ] || [ ! -e ${column_four} ]; then
       if [[ ${item} =~ "chown" && ${item} =~ "-R" ]]; then
         echoWarn "${column_four} not found!"
       else
@@ -80,9 +81,9 @@ function setPerms {
       fi
     else
       if [[ ${item} =~ "chown" && ${item} =~ "-R" ]]; then
-        echoError "Failed to set ${column_two} owner for ${column_four} ."
+        echoError "Failed to set ${column_two} as owner for ${column_four}"
       else
-        echoError "Failed to set ${column_two} permission for ${column_three} ."
+        echoError "Failed to set ${column_two} permission for ${column_three}"
       fi
     fi
   done
