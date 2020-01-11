@@ -78,9 +78,9 @@ function denyFromIpFile {
 	while read -r line; do
 	  let "line_number++"
 	  fine_line="$(echo -e "${line}" | tr -d '[:space:]')"
-	  if [[ $(checkIP ${line})$? == 0 ]]; then
+	  if [[ $(checkIP ${fine_line})$? == 0 ]]; then
 			ufw insert 1 deny from ${fine_line};
-		elif [[ ${line} =~ [[:space:]] || ${line} == "" ]] ; then
+		elif [[ $line_space =~ [:space:]* && ! $line_space =~ [0-9a-zA-Z]+ ]]; then
 		  echoWarn "Empty line."
 		  continue
 		else
