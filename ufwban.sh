@@ -81,7 +81,7 @@ function denyFromIpFile {
 	  if [[ $(checkIP ${fine_line})$? == 0 ]]; then
 			ufw insert 1 deny from ${fine_line};
 		elif [[ $line_space =~ [:space:]* && ! $line_space =~ [0-9a-zA-Z]+ ]]; then
-		  echoWarn "Empty line."
+		  echoWarn "Line ${line_number}: Empty line."
 		  continue
 		else
 			echoError "Line ${line_number}: Not a valid ip address entry.";
