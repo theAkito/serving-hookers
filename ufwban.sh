@@ -72,27 +72,28 @@ function enableUfw {
 
 function denyFromIpFile {
   local -i line_number=0
-	local ipban_file="ipban.txt";
-	local errors_happened=false
-	local fine_line
-	while read -r line; do
-	  let "line_number++"
-	  fine_line="$(echo -e "${line}" | tr -d '[:space:]')"
-	  if [[ $(checkIP ${fine_line})$? == 0 ]]; then
-			ufw insert 1 deny from ${fine_line};
-		elif [[ $line_space =~ [:space:]* && ! $line_space =~ [0-9a-zA-Z]+ ]]; then
-		  echoWarn "Line ${line_number}: Empty line."
-		  continue
-		else
-			echoError "Line ${line_number}: Not a valid ip address entry.";
-			errors_happened=true
-			continue
-		fi;
-	done <${file};
-	if [[ ${errors_happened} == true ]]; then
-	  echoWarn "Some IP entries were invalid. Check the ${ipban_file} file."
-	fi
-	return 0;
+  local ipban_file="ipban.txt";
+  local errors_happened=false
+  local fine_line
+  while read -r line; do
+    let "line_number++"
+    fine_line="$(echo -e "${line}" | tr -d '[:space:]')"
+    if [[ $(checkIP ${fine_line})$? == 0 ]]; then
+      ufw insert 1 deny from ${fine_line};
+    elif [[ $line_space =~ [:space:]* && ! $line_space =~ [0-9a-zA-Z]+ ]]; then
+      echoWarn "Line ${line_number}: Empty line."
+      continue
+    else
+      echoError "Line ${line_number}: Not a valid ip address entry.";
+      errors_happened=true
+      continue
+    fi;
+  done <${ipban_file};
+  if [[ ${errors_happened} == true ]]; then
+    echoWarn "Some IP entries were invalid. Check the ${ipban_file} file."
+    return 1
+  fi
+  return 0;
 }
 
 checkPriv
