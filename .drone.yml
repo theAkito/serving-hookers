@@ -1,0 +1,17 @@
+---
+kind: pipeline
+type: docker
+name: default
+
+platform:
+  os: linux
+  arch: arm
+
+steps:
+- name: go1.13.1
+  image: debian:testing
+  commands:
+  - apt update
+  - apt install -y build-essential sudo git  
+  - bash go1.13.1_arm_bootstrap.sh
+  - bash -c "source go_path.sh"
