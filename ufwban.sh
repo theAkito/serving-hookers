@@ -74,23 +74,23 @@ function checkIP {
 
 function installUfw {
   silence "ufw status"
-	if [[ "$?" == 0 ]]; then
-	  echoInfo "UFW installed."
-	else
-	  silence "apt-get update"
-	  if [[ "$?" == 0 ]]; then
-	    echoInfo "APT repositories updated."
-	  else
-	    echoWarn "Failed to update APT repositories."
-	  fi
-	  silence "apt-get install -y ufw"
-	  if [[ "$?" == 0 ]]; then
-	    echoInfo "UFW installed."
-	  else
-	    echoError "UFW installation failed. Exiting."
-	    exit 1
-	  fi
-	fi
+  if [[ "$?" == 0 ]]; then
+    echoInfo "UFW installed."
+  else
+    silence "apt-get update"
+    if [[ "$?" == 0 ]]; then
+      echoInfo "APT repositories updated."
+    else
+      echoWarn "Failed to update APT repositories."
+    fi
+    silence "apt-get install -y ufw"
+    if [[ "$?" == 0 ]]; then
+      echoInfo "UFW installed."
+    else
+      echoError "UFW installation failed. Exiting."
+      exit 1
+    fi
+  fi
 }
 
 function denyFromIpFile {
