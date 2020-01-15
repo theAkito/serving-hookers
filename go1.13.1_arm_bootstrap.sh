@@ -3,10 +3,12 @@
 # Copyright (C) 2019 Akito
 
 # Clone the repository and set GOROOT_BOOTSTRAP environment variable.
-mkdir ~/src > /dev/null 2>&1 ;
+mkdir ~/src > /dev/null 2>&1
 cd ~/src && \
-git clone https://github.com/Akito13/go1.11.2_arm_bootstrap.git
-GOROOT_BOOTSTRAP=$HOME/src/go1.11.2_arm_bootstrap/go-linux-arm-bootstrap
+git clone https://github.com/theAkito/go1.11.2_arm_bootstrap.git
+export GOROOT_BOOTSTRAP=$HOME/src/go1.11.2_arm_bootstrap/go-linux-arm-bootstrap
+export GOPATH="$HOME/go"
+export PATH="$PATH:$HOME/src/go/bin"
 
 # Retrieving Go source code.
 mkdir go                                   && \
@@ -46,7 +48,7 @@ else
     echo -e "by running the following commands:"
     echo
     echo -e 'export PATH="$PATH:$HOME/src/go/bin"'
-    echo -e 'export GOPATH="HOME/go"'
+    echo -e 'export GOPATH="$HOME/go"'
     echo -e "or"
     echo -e "source go_path.sh"
 fi
