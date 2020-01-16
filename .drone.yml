@@ -15,3 +15,18 @@ steps:
   - apt install -y build-essential sudo git  
   - bash go1.13.1_arm_bootstrap.sh
   - bash -c "source go_path.sh"
+
+- name: perm_ssh.sh
+  image: debian:testing
+  commands:
+  - apt update
+  - apt install -y build-essential sudo git
+  - useradd -m drone
+  - cd /home/drone
+  - mkdir .ssh
+  - touch .ssh/config
+  - touch .ssh/authorized_keys
+  - touch .ssh/id_rsa.pub
+  - touch .ssh/id_rsa
+  - cd -
+  - bash perm_ssh.sh drone

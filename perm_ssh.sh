@@ -70,7 +70,7 @@ function setPerms {
     silence "${item}"
     if [[ $? == 0 ]]; then
       if [[ ${item} =~ "chown" && ${item} =~ "-R" ]]; then
-        echoInfo "Set ${column_two} as owner for ${column_four}"
+        echoInfo "Set ${column_two} as owner of ${column_four}"
       else
         echoInfo "Set ${column_two} permission for ${column_three}"
       fi
@@ -82,7 +82,7 @@ function setPerms {
       fi
     else
       if [[ ${item} =~ "chown" && ${item} =~ "-R" ]]; then
-        echoError "Failed to set ${column_two} as owner for ${column_four}"
+        echoError "Failed to set ${column_two} as owner of ${column_four}"
       else
         echoError "Failed to set ${column_two} permission for ${column_three}"
       fi
