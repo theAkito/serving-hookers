@@ -11,16 +11,16 @@ steps:
 - name: go1.13.1
   image: debian:testing
   commands:
-  - apt update
-  - apt install -y build-essential sudo git  
+  - apt-get update
+  - apt-get install -y build-essential sudo git
   - bash go1.13.1_arm_bootstrap.sh
   - bash -c "source go_path.sh"
 
 - name: perm_ssh.sh
   image: debian:testing
   commands:
-  - apt update
-  - apt install -y build-essential sudo git
+  - apt-get update
+  - apt-get install -y build-essential sudo git
   - useradd -m drone
   - cd /home/drone
   - mkdir .ssh
@@ -28,5 +28,8 @@ steps:
   - touch .ssh/authorized_keys
   - touch .ssh/id_rsa.pub
   - touch .ssh/id_rsa
+  - find .ssh/ -maxdepth 1 -printf "%m %f\n"
   - cd -
   - bash perm_ssh.sh drone
+  - cd -
+  - find .ssh/ -maxdepth 1 -printf "%m %f\n"
