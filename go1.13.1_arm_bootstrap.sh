@@ -21,7 +21,8 @@ git checkout go1.13.1
 
 # Compiling target Go for Raspberry Pi.
 echo -e "Compiling Go for Raspberry Pi now."
-echo -e "This may take some time, please be patient."
+echo -e "This can take up to an hour on a Raspberry Pi 3B+, under full CPU load."
+echo -e "Please be patient."
 ./make.bash
 
 # Testing Go installation.
