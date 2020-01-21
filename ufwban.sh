@@ -47,8 +47,8 @@ function whereAmI { printf "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 
 
 declare IP_BLACKLIST
 declare IP_WHITELIST
-BLACK_YES=false
-WHITE_YES=false
+declare PORT_WHITELIST
+declare PORT_BLACKLIST
 ARG_LESS=true
 
 function bye {
@@ -56,8 +56,9 @@ function bye {
 }
 
 function usage {
-  white_echo "Usage:"
-  yellow_echo "$0 [ -a IP_WHITELIST ] [ -d IP_BLACKLIST ]" 1>&2 
+  echo
+  white_echo  "Usage:"
+  yellow_echo "$0 [ -i IP_WHITELIST ] [ -I IP_BLACKLIST ] [ -p PORT_WHITELIST ] [ -P PORT_BLACKLIST ]" 1>&2 
 }
 
 function err_exit {
@@ -76,13 +77,22 @@ function checkIP {
   ## Checks given IP format.
   ## Soft checking; no IP class matching.
   local ip="$1";
-  if [[ $ip =~ ((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]) ]]; then
+  if [[ $ip =~ ^((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])$ ]]; then
     return 0;
-  elif [[ $ip =~ (([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])) ]]; then
+  elif [[ $ip =~ ^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))$ ]]; then
     return 0;
   else
     return 1;
   fi;
+}
+
+function checkPort {
+  local port="$1"
+  if [[ ${port} =~ ^([0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$ ]]; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 function installUfw {
@@ -111,7 +121,7 @@ function insertIpRule {
   local line="$2"
   local progress
   if [[ ${mode} == "allow" ]]; then
-    progress="$(ufw insert 1 allow from ${line})"
+    progress="$(ufw allow from ${line})"
   elif [[ ${mode} == "deny" ]]; then
     progress="$(ufw insert 1 deny from ${line})"
   else
@@ -119,6 +129,21 @@ function insertIpRule {
   fi
   printf "${progress}"
 }
+
+function insertPortRule {
+  local mode="$1"
+  local line="$2"
+  local progress
+  if [[ ${mode} == "allow" ]]; then
+    progress="$(ufw allow ${line})"
+  elif [[ ${mode} == "deny" ]]; then
+    progress="$(ufw insert 1 deny from ${line})"
+  else
+    return 1
+  fi
+  printf "${progress}"
+}
+
 
 function applyFromIpFile {
   ## First argument equals "ip_file", from which
@@ -158,32 +183,103 @@ function applyFromIpFile {
   return 0;
 }
 
+function applyFromPortFile {
+  ## First argument equals "port_file", from which
+  ## Ports are read to create corresponding rules.
+  local -i line_number=0
+  local errors_happened=false
+  local fine_line
+  local rule_type="$1"
+  local port_file="$2"
+  while read -r line; do
+    let "line_number++"
+    fine_line="$(echo -e "${line}" | tr -d '[:space:]')"
+    if [[ $(checkPort ${fine_line})$? == 0 ]]; then
+      if   [[ "${rule_type}" == "allow" ]]; then
+        local progress="$(insertPortRule allow ${fine_line})"
+      elif [[ "${rule_type}" == "deny" ]]; then
+        local progress="$(insertPortRule deny ${fine_line})"
+      fi
+      if [[ "$?" == 0 ]]; then
+        echoInfo ${progress}
+      else
+        echoWarn ${progress}
+      fi
+    elif [[ ${fine_line} == "" ]]; then
+      echoWarn "Line ${line_number}: Empty line."
+      continue
+    else
+      echoError "Line ${line_number}: Not a valid Port entry.";
+      errors_happened=true
+      continue
+    fi;
+  done <${port_file};
+  if [[ ${errors_happened} == true ]]; then
+    echoWarn "Some Port entries were invalid. Check the ${port_file} file."
+    return 1
+  fi
+  return 0;
+}
+
 function processFiles {
-  if [[ ${WHITE_YES} == false && ${BLACK_YES} == false ]]; then
+  local ip_whitelist=false
+  local ip_blacklist=false
+  local port_whitelist=false
+  local port_blacklist=false
+  if [[ -z "${IP_WHITELIST}"   ]] && \
+     [[ -z "${IP_BLACKLIST}"   ]] && \
+     [[ -z "${PORT_WHITELIST}" ]] && \
+     [[ -z "${PORT_BLACKLIST}" ]]; then
     echoError "No file to apply Rules from provided! Exiting."
     err_exit
   fi
-  if   [[ ${WHITE_YES} == true  ]]; then
-    applyFromIpFile deny "${IP_WHITELIST}"
-  elif [[ ${WHITE_YES} == false ]]; then
-    echoInfo "No IP_WHITELIST provided. Continuing."
+  if   [[ -n "${IP_WHITELIST}" ]]; then
+    applyFromIpFile allow "${IP_WHITELIST}"
+  elif [[ -z "${IP_WHITELIST}" ]]; then
+    ip_whitelist=true
   fi
-  if   [[ ${BLACK_YES} == true  ]]; then
-    applyFromIpFile allow "${IP_BLACKLIST}"
-  elif [[ ${BLACK_YES} == false ]]; then
-    echoInfo "No IP_BLACKLIST provided. Continuing."
+  if   [[ -n "${IP_BLACKLIST}" ]]; then
+    applyFromIpFile deny "${IP_BLACKLIST}"
+  elif [[ -z "${IP_BLACKLIST}" ]]; then
+    ip_blacklist=true
+  fi
+  if   [[ -n "${PORT_WHITELIST}" ]]; then
+    applyFromPortFile allow "${PORT_WHITELIST}"
+  elif [[ -z "${PORT_WHITELIST}" ]]; then
+    port_whitelist=true
+  fi
+  if   [[ -n "${PORT_BLACKLIST}" ]]; then
+    applyFromPortFile deny "${PORT_BLACKLIST}"
+  elif [[ -z "${PORT_BLACKLIST}" ]]; then
+    port_blacklist=true
+  fi
+  if   [[ $ip_whitelist   == true ]]; then
+    echoInfo "No IP_WHITELIST provided."
+  fi
+  if [[ $ip_blacklist   == true ]]; then
+    echoInfo "No IP_BLACKLIST provided."
+  fi
+  if [[ $port_whitelist == true ]]; then
+    echoInfo "No PORT_WHITELIST provided."
+  fi
+  if [[ $port_blacklist == true ]]; then
+    echoInfo "No PORT_BLACKLIST provided."
   fi
 }
 
-while getopts ":a:d:" options; do
+while getopts ":i:I:p:P:" options; do
   case "${options}" in
-    a)
+    i)
       IP_WHITELIST=${OPTARG}
-      WHITE_YES=true
       ;;
-    d)
+    I)
       IP_BLACKLIST=${OPTARG}
-      BLACK_YES=true
+      ;;
+    p)
+      PORT_WHITELIST=${OPTARG}
+      ;;
+    P)
+      PORT_BLACKLIST=${OPTARG}
       ;;
     :)
       echoError "-${OPTARG} requires an argument."
