@@ -43,19 +43,32 @@ function whereAmI { printf "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 
 ######################################################################################################
 #
 ## Bans list of IP addresses through ufw.
-## Requires "ipban.txt" which contains one IPv4 or IPv6 address per line to ban.
-## First argument given to this script can overwrite default name of "ipban.txt".
+## Requires "IP_WHITELIST" or "IP_BLACKLIST" file which contains one IPv4 or IPv6 address per line to ban.
 
-ipban_file="$1"
+declare IP_BLACKLIST
+declare IP_WHITELIST
+BLACK_YES=false
+WHITE_YES=false
+ARG_LESS=true
 
 function bye {
   white_echo "OK"
 }
 
-function setIpbanFile {
-  if [[ -z "${ipban_file}" ]]; then
-    ipban_file="ipban.txt"
-    echoInfo 'No filename set. Using default name "ipban.txt".'
+function usage {
+  white_echo "Usage:"
+  yellow_echo "$0 [ -a IP_WHITELIST ] [ -d IP_BLACKLIST ]" 1>&2 
+}
+
+function err_exit {
+  usage
+  exit 1
+}
+
+function confirmArgs {
+  if [[ "${ARG_LESS}" == true ]]; then
+    echoError "No arguments provided."
+    err_exit
   fi
 }
 
@@ -93,15 +106,37 @@ function installUfw {
   fi
 }
 
-function denyFromIpFile {
+function insertIpRule {
+  local mode="$1"
+  local line="$2"
+  local progress
+  if [[ ${mode} == "allow" ]]; then
+    progress="$(ufw insert 1 allow from ${line})"
+  elif [[ ${mode} == "deny" ]]; then
+    progress="$(ufw insert 1 deny from ${line})"
+  else
+    return 1
+  fi
+  printf "${progress}"
+}
+
+function applyFromIpFile {
+  ## First argument equals "ip_file", from which
+  ## IP addresses are read to create corresponding rules.
   local -i line_number=0
   local errors_happened=false
   local fine_line
+  local rule_type="$1"
+  local ip_file="$2"
   while read -r line; do
     let "line_number++"
     fine_line="$(echo -e "${line}" | tr -d '[:space:]')"
     if [[ $(checkIP ${fine_line})$? == 0 ]]; then
-      local progress="$(ufw insert 1 deny from ${fine_line})"
+      if   [[ "${rule_type}" == "allow" ]]; then
+        local progress="$(insertIpRule allow ${fine_line})"
+      elif [[ "${rule_type}" == "deny" ]]; then
+        local progress="$(insertIpRule deny ${fine_line})"
+      fi
       if [[ "$?" == 0 ]]; then
         echoInfo ${progress}
       else
@@ -115,16 +150,54 @@ function denyFromIpFile {
       errors_happened=true
       continue
     fi;
-  done <${ipban_file};
+  done <${ip_file};
   if [[ ${errors_happened} == true ]]; then
-    echoWarn "Some IP entries were invalid. Check the ${ipban_file} file."
+    echoWarn "Some IP entries were invalid. Check the ${ip_file} file."
     return 1
   fi
   return 0;
 }
 
+function processFiles {
+  if [[ ${WHITE_YES} == false && ${BLACK_YES} == false ]]; then
+    echoError "No file to apply Rules from provided! Exiting."
+    err_exit
+  fi
+  if   [[ ${WHITE_YES} == true  ]]; then
+    applyFromIpFile deny "${IP_WHITELIST}"
+  elif [[ ${WHITE_YES} == false ]]; then
+    echoInfo "No IP_WHITELIST provided. Continuing."
+  fi
+  if   [[ ${BLACK_YES} == true  ]]; then
+    applyFromIpFile allow "${IP_BLACKLIST}"
+  elif [[ ${BLACK_YES} == false ]]; then
+    echoInfo "No IP_BLACKLIST provided. Continuing."
+  fi
+}
+
+while getopts ":a:d:" options; do
+  case "${options}" in
+    a)
+      IP_WHITELIST=${OPTARG}
+      WHITE_YES=true
+      ;;
+    d)
+      IP_BLACKLIST=${OPTARG}
+      BLACK_YES=true
+      ;;
+    :)
+      echoError "-${OPTARG} requires an argument."
+      err_exit
+      ;;
+    *)
+      err_exit
+      ;;
+  esac
+  ARG_LESS=false
+done
+
 checkPriv
 installUfw
-setIpbanFile
-denyFromIpFile
+confirmArgs
+processFiles
 bye
