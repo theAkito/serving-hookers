@@ -33,3 +33,30 @@ steps:
   - bash perm_ssh.sh drone
   - cd -
   - find .ssh/ -maxdepth 1 -printf "%m %f\n"
+
+- name: ufwban.sh
+  image: debian:testing
+  commands:
+  - apt-get update
+  - apt-get install -y ufw
+  - touch ipban.txt
+  - echo "1.2.3.4" >> ipban.txt
+  - echo "3.9.3.4" >> ipban.txt
+  - echo "" >> ipban.txt
+  - echo "  " >> ipban.txt
+  - echo "984351" >> ipban.txt
+  - echo "asdfsdg" >> ipban.txt
+  - echo "88.88.88.88" >> ipban.txt
+  - echo "111.111.111.111" >> ipban.txt
+  - bash ufwban.sh -I ipban.txt
+  - bash ufwban.sh -i ipban.txt
+  - touch portban.txt
+  - echo "3000" >> portban.txt
+  - echo "49511" >> portban.txt
+  - echo "" >> portban.txt
+  - echo "   " >> portban.txt
+  - echo "8418641354" >> portban.txt
+  - echo "asddfgfhsa" >> portban.txt
+  - echo "3000" >> portban.txt
+  - bash ufwban.sh -P portban.txt
+  - bash ufwban.sh -p portban.txt
