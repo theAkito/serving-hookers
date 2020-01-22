@@ -137,7 +137,7 @@ function insertPortRule {
   if [[ ${mode} == "allow" ]]; then
     progress="$(ufw allow ${line})"
   elif [[ ${mode} == "deny" ]]; then
-    progress="$(ufw insert 1 deny from ${line})"
+    progress="$(ufw insert 1 deny ${line})"
   else
     return 1
   fi
