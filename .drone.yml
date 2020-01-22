@@ -8,13 +8,13 @@ platform:
   arch: arm
 
 steps:
-- name: go1.13.1
-  image: debian:testing
-  commands:
-  - apt-get update
-  - apt-get install -y build-essential sudo git
-  - bash go1.13.1_arm_bootstrap.sh
-  - bash -c "source go_path.sh"
+#- name: go1.13.1
+#  image: debian:testing
+#  commands:
+#  - apt-get update
+#  - apt-get install -y build-essential sudo git
+#  - bash go1.13.1_arm_bootstrap.sh
+#  - bash -c "source go_path.sh"
 
 - name: perm_ssh.sh
   image: debian:testing
