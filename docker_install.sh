@@ -1,34 +1,54 @@
 #!/bin/bash
-# See LICENSE.
-# Copyright (C) 2019 Akito <the@akito.ooo>
-
-###   Boilerplate
-# Coloured Outputs
-# Echoes
-function red_echo      { echo -e "\033[31m$@\033[0m";   }
-function green_echo    { echo -e "\033[32m$@\033[0m";   }
-function yellow_echo   { echo -e "\033[33m$@\033[0m";   }
-function white_echo    { echo -e "\033[1;37m$@\033[0m"; }
-# Printfs
-function red_printf    { printf "\033[31m$@\033[0m";    }
-function green_printf  { printf "\033[32m$@\033[0m";    }
-function yellow_printf { printf "\033[33m$@\033[0m";    }
-function white_printf  { printf "\033[1;37m$@\033[0m";  }
-# Debugging Outputs
-function white_brackets { local args="$@"; white_printf "["; printf "${args}"; white_printf "]";  }
-function echoInfo  { local args="$@"; white_brackets $(green_printf "INFO") && echo " ${args}";   }
-function echoWarn  { local args="$@"; white_brackets $(yellow_printf "WARN") && echo " ${args}";  }
-function echoError { local args="$@"; white_brackets $(red_printf "ERROR") && echo " ${args}";    }
-# Silences commands' STDOUT as well as STDERR.
-function silence { local args="$@"; ${args} &>/dev/null; }
-function checkPriv {
-  if [[ "$EUID" != 0 ]]; then
-    ## Check your privilege.
-    echoError "Please run me as root.";
-    exit 1;
-  fi;
-}
-###
+#########################################################################
+# Copyright (C) 2020 Akito <the@akito.ooo>                              #
+#                                                                       #
+# This program is free software: you can redistribute it and/or modify  #
+# it under the terms of the GNU General Public License as published by  #
+# the Free Software Foundation, either version 3 of the License, or     #
+# (at your option) any later version.                                   #
+#                                                                       #
+# This program is distributed in the hope that it will be useful,       #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of        #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the          #
+# GNU General Public License for more details.                          #
+#                                                                       #
+# You should have received a copy of the GNU General Public License     #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>. #
+#########################################################################
+#
+#################################   Boilerplate of the Boilerplate   ####################################################
+# Coloured Echoes                                                                                                       #
+function red_echo      { echo -e "\033[31m$@\033[0m";   }                                                               #
+function green_echo    { echo -e "\033[32m$@\033[0m";   }                                                               #
+function yellow_echo   { echo -e "\033[33m$@\033[0m";   }                                                               #
+function white_echo    { echo -e "\033[1;37m$@\033[0m"; }                                                               #
+# Coloured Printfs                                                                                                      #
+function red_printf    { printf "\033[31m$@\033[0m";    }                                                               #
+function green_printf  { printf "\033[32m$@\033[0m";    }                                                               #
+function yellow_printf { printf "\033[33m$@\033[0m";    }                                                               #
+function white_printf  { printf "\033[1;37m$@\033[0m";  }                                                               #
+# Debugging Outputs                                                                                                     #
+function white_brackets { local args="$@"; white_printf "["; printf "${args}"; white_printf "]"; }                      #
+function echoDebug  { local args="$@"; if [[ ${debug_flag} == true ]]; then                                             #
+white_brackets "$(white_printf   "DEBUG")" && echo " ${args}"; fi; }                                                    #
+function echoInfo   { local args="$@"; white_brackets "$(green_printf  "INFO" )"  && echo " ${args}"; }                 #
+function echoWarn   { local args="$@"; white_brackets "$(yellow_printf "WARN" )"  && echo " ${args}"; 1>&2; }           #
+function echoError  { local args="$@"; white_brackets "$(red_printf    "ERROR")"  && echo " ${args}"; 1>&2; }           #
+# Silences commands' STDOUT as well as STDERR.                                                                          #
+function silence { local args="$@"; ${args} &>/dev/null; }                                                              #
+# Check your privilege.                                                                                                 #
+function checkPriv { if [[ "$EUID" != 0 ]]; then echoError "Please run me as root."; exit 1; fi;  }                     #
+# Returns 0 if script is sourced, returns 1 if script is run in a subshell.                                             #
+function checkSrc { (return 0 2>/dev/null); if [[ "$?" == 0 ]]; then return 0; else return 1; fi; }                     #
+# Prints directory the script is run from. Useful for local imports of BASH modules.                                    #
+# This only works if this function is defined in the actual script. So copy pasting is needed.                          #
+function whereAmI { printf "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )";   }                     #
+# Alternatively, this alias works in the sourcing script, but you need to enable alias expansion.                       #
+alias whereIsMe='printf "$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"'                            #
+debug_flag=false                                                                                                        #
+#########################################################################################################################
+distribution_name="$1"
+repository_channels="$2"
 function hello {
   ## Checks if Docker works on this system already.
   ## Warns, if Docker already is installed.
@@ -51,14 +71,46 @@ function hello {
     return 0
   fi
 }
+function removePrevious {
+  silence "apt-get remove -y \
+             docker \
+             docker-engine \
+             docker.io \
+             containerd \
+             runc"
+  if [[ $? != 0 ]]; then
+    echoError "Failed to remove previous Docker versions through APT. Exiting."
+    exit 1
+  else
+    echoInfo "Successfully removed previous Docker versions through APT."
+  fi
+}
 function addRepo {
   ## Takes the system's architecture as the first argument and
   ## uses it to select and add the correct Docker APT repository.
+  ## Corrects possible issues with architecture and distribution
+  ## names.
   local arch="$1"
+  local distName
+  if ! [[ -z distribution_name ]]; then
+    distName="${distribution_name}"
+  else
+    distName="$(lsb_release -cs)"
+  fi
+  if [[ -z repository_channels ]] && \
+   ! [[ -z distribution_name ]]; then
+    repository_channels="stable"
+  fi
+  case "${distName}" in
+    bullseye)
+      distName="buster";;
+    sid)
+      distName="buster";;
+  esac
   add-apt-repository \
      "deb [arch=${arch}] https://download.docker.com/linux/debian \
-     $(lsb_release -cs) \
-     stable"
+     ${distName} \
+     ${repository_channels}"
   if [[ $? != 0 ]]; then
     echoError "Failed to add Docker APT repository. Exiting."
     exit 1
@@ -69,16 +121,18 @@ function addRepo {
 function chooseRepo {
   ## Detects system's CPU architecture and adds the Docker APT repository
   ## depending on the detected CPU architecture.
-  if [[ $(uname -m) == x86_64 || $(uname -m) == amd64 ]]; then
-    addRepo amd64
-  elif [[ $(uname -m) == armhf ]]; then
-    addRepo armhf
-  elif [[ $(uname -m) == arm64 ]]; then
-    addRepo arm64
-  else
-    echoError "The CPU architecture of this PC is not supported. Exiting."
-    exit 1
-  fi
+  arch="$(uname -m)"
+  case "${arch}" in
+    x86_64|amd64)
+      addRepo amd64;;
+    armhf)
+      addRepo armhf;;
+    arm64|aarch64)
+      addRepo arm64;;
+    *)
+      echoError "The CPU architecture of this PC is not supported. Exiting."
+      exit 1;;
+  esac
 }
 function update {
   silence "apt-get update"
@@ -91,6 +145,7 @@ function update {
 }
 function getDeps {
   silence "apt-get install -y \
+    lsb-release \
     apt-transport-https \
     ca-certificates \
     curl \
@@ -104,7 +159,8 @@ function getDeps {
   fi
 }
 function getDockerPubKey {
-  curl -fsSL https://download.docker.com/linux/debian/gpg | silence "apt-key add -"
+  curl -fsSL https://download.docker.com/linux/debian/gpg | \
+  silence "apt-key add -"
   if [[ $? != 0 ]]; then
     echoError "Failed to add APT key. Exiting."
     exit 1
@@ -113,7 +169,10 @@ function getDockerPubKey {
   fi
 }
 function getDockerPackages {
-  silence "apt-get -y install docker-ce docker-ce-cli containerd.io"
+  silence "apt-get -y install \
+             docker-ce \
+             docker-ce-cli \
+             containerd.io"
   if [[ $? != 0 ]]; then
     echoError "Failed to get Docker through APT. Exiting."
     exit 1
@@ -140,6 +199,8 @@ function bye {
 hello
 # Checks if user running this script is `root`.
 checkPriv
+# Removes previous Docker versions.
+removePrevious
 # Updating APT index.
 update
 # Getting dependencies.
