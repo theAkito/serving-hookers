@@ -65,6 +65,7 @@ fi
 # for each file and folder listed here.
 declare -a SET_PERMS
 SET_PERMS=( "chown ${usr}:${usr} -R   /home/${usr}/.ssh"                 \
+            "chown ${usr}:${usr}      /home/${usr}"                      \
             "chmod 0700               /home/${usr}/.ssh"                 \
             "chmod 0400               /home/${usr}/.ssh/config"          \
             "chmod 0600               /home/${usr}/.ssh/authorized_keys" \
