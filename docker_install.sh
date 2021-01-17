@@ -28,12 +28,14 @@ function green_printf  { printf "\033[32m$@\033[0m";    }                       
 function yellow_printf { printf "\033[33m$@\033[0m";    }                                                               #
 function white_printf  { printf "\033[1;37m$@\033[0m";  }                                                               #
 # Debugging Outputs                                                                                                     #
+function getCurrentTime { printf '%s' "$(date +'%Y-%m-%dT%H:%M:%S%Z')"; }                                               #
 function white_brackets { local args="$@"; white_printf "["; printf "${args}"; white_printf "]"; }                      #
 function echoDebug  { local args="$@"; if [[ ${debug_flag} == true ]]; then                                             #
 white_brackets "$(white_printf   "DEBUG")" && echo " ${args}"; fi; }                                                    #
 function echoInfo   { local args="$@"; white_brackets "$(green_printf  "INFO" )"  && echo " ${args}"; }                 #
-function echoWarn   { local args="$@"; white_brackets "$(yellow_printf "WARN" )"  && echo " ${args}"; 1>&2; }           #
-function echoError  { local args="$@"; white_brackets "$(red_printf    "ERROR")"  && echo " ${args}"; 1>&2; }           #
+function echoWarn   { local args="$@"; white_brackets "$(yellow_printf "WARN" )"  && echo " ${args}" 1>&2; }            #
+function echoError  { local args="$@"; white_brackets "$(red_printf    "ERROR")"  && echo " ${args}" 1>&2; }            #
+function log { printf '%s%s\n' "$(getCurrentTime): " "$@"; }                                                            #
 # Silences commands' STDOUT as well as STDERR.                                                                          #
 function silence { local args="$@"; ${args} &>/dev/null; }                                                              #
 # Check your privilege.                                                                                                 #
@@ -72,9 +74,10 @@ function hello {
   fi
 }
 function removePrevious {
+  # Package "docker-engine" might be missing, resulting in unnecessary error.
+  silence "apt-get remove -y docker-engine" || true
   silence "apt-get remove -y \
              docker \
-             docker-engine \
              docker.io \
              containerd \
              runc"
@@ -92,13 +95,12 @@ function addRepo {
   ## names.
   local arch="$1"
   local distName
-  if ! [[ -z distribution_name ]]; then
+  if ! [[ -z "${distribution_name}" ]]; then
     distName="${distribution_name}"
   else
     distName="$(lsb_release -cs)"
   fi
-  if [[ -z repository_channels ]] && \
-   ! [[ -z distribution_name ]]; then
+  if [[ -z "${repository_channels}" ]]; then
     repository_channels="stable"
   fi
   case "${distName}" in
@@ -107,10 +109,8 @@ function addRepo {
     sid)
       distName="buster";;
   esac
-  add-apt-repository \
-     "deb [arch=${arch}] https://download.docker.com/linux/debian \
-     ${distName} \
-     ${repository_channels}"
+  silence "mkdir /etc/apt/sources.list.d/"
+  echo "deb [arch=${arch}] https://download.docker.com/linux/debian ${distName} ${repository_channels}" > /etc/apt/sources.list.d/docker.list
   if [[ $? != 0 ]]; then
     echoError "Failed to add Docker APT repository. Exiting."
     exit 1
@@ -149,8 +149,7 @@ function getDeps {
     apt-transport-https \
     ca-certificates \
     curl \
-    gnupg2 \
-    software-properties-common"
+    gnupg2"
   if [[ $? != 0 ]]; then
     echoError "Failed to get dependencies through APT. Exiting."
     exit 1
